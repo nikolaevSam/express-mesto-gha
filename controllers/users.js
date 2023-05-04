@@ -14,7 +14,7 @@ module.exports.getUserById = (req, res) => {
     .then(user => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "SomeError") {
-        return re.status(404).send({ message: "Переданы некорректные данные." });
+        return res.status(404).send({ message: "Переданы некорректные данные." });
       } else if (err.name === "DocumentNotFoundError") {
         return res.status(400).send({ message: "Пользователь по указанному _id не найден." });
       } else {
@@ -43,7 +43,7 @@ module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(req.user._id,
     {
       name,
-      about
+      about,
     },
     {
       new: true,
@@ -51,7 +51,7 @@ module.exports.updateUser = (req, res) => {
     })
     .then(user => res.status(200).send(user))
     .catch((err) => {
-      if (err.name === "SomeError" || err.name === "ValidationError") {
+      if (err.name === "ValidationError") {
         return res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля." });
       } else {
         return res.status(500).send({ message: err.message });
@@ -72,7 +72,7 @@ module.exports.updateAvatar = (req, res) => {
     })
     .then(user => res.status(200).send(user))
     .catch((err) => {
-      if (err.name === "SomeError" || err.name === "ValidationError") {
+      if (err.name === "ValidationError") {
         return res.status(400).send({ message: "Переданы некорректные данные при обновлении аватара." });
       } else {
         return res.status(500).send({ message: err.message });
