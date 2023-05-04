@@ -13,7 +13,7 @@ module.exports.getUserById = (req, res) => {
     .orFail()
     .then(user => res.status(200).send(user))
     .catch((err) => {
-      if (err.name === "SomeError") {
+      if (err.name === "CastError") {
         return res.status(400).send({ message: "Переданы некорректные данные." });
       };
       if (err.name === "DocumentNotFoundError") {
