@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const bodyParser = require('body-parser');
+const router = require('express').Router();
 
 const { PORT = 3000 } = process.env;
 const URL = 'mongodb://localhost:27017/mestodb'
