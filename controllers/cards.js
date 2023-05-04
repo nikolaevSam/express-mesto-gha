@@ -27,14 +27,14 @@ module.exports.deleteCardById = (req, res) => {
     .orFail()
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: "Карточка по указанному _id не найден." });
+        return res.status(400).send({ message: "Переданы некорректные данные." });
       } else {
         return res.status(200).send(card);
       }
     })
     .catch((err) => {
       if (err.name === "SomeError") {
-        return re.status(400).send({ message: "Переданы некорректные данные." });
+        return re.status(404).send({ message: "Карточка по указанному _id не найден." });
       } else {
         return res.status(500).send({ message: err.message });
       };
