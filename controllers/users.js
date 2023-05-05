@@ -13,7 +13,7 @@ module.exports.getUserById = (req, res) => {
     .orFail(new Error('NoValidId'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
+      if (err.message === 'NoValidId') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
       if (err.name === 'CastError') {
@@ -52,7 +52,7 @@ module.exports.updateUser = (req, res) => {
     .orFail(new Error('NoValidId'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
+      if (err.message === 'NoValidId') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
       if (err.name === 'CastError') {
@@ -78,7 +78,7 @@ module.exports.updateAvatar = (req, res) => {
     .orFail(new Error('NoValidId'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
+      if (err.message === 'NoValidId') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
       if (err.name === 'CastError') {
