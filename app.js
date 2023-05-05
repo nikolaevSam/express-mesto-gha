@@ -1,19 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
 const bodyParser = require('body-parser');
-const router = require('express').Router();
 
-const { PORT = 3000 } = process.env;
-const URL = 'mongodb://localhost:27017/mestodb'
+const {
+  PORT = 3000,
+  URL = 'mongodb://localhost:27017/mestodb'
+} = process.env;
 
-
-app.use(bodyParser.json());
-app.use(express.json());
-
-mongoose.connect(URL, {
-  useNewUrlParser: true,
-});
+const app = express();
 
 app.use((req, res, next) => {
   req.user = {
@@ -21,12 +15,13 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+app.use(bodyParser.json());
+
+mongoose.connect(URL);
+
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
-
-router.use('/*', (req, res) => {
-  res.status(404).send({ message: '404: Not Found' });
-});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
