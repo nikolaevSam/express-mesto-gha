@@ -1,3 +1,4 @@
+const { restart } = require('nodemon');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -27,14 +28,14 @@ module.exports.deleteCardById = (req, res) => {
     .orFail()
     .then((card) => {
       if (!card) {
-        return res.status(400).send({ message: "Переданы некорректные данные." });
+        return res.status(404).send({ message: "Переданы некорректные данные." });
       } else {
         return res.status(200).send(card);
       }
     })
     .catch((err) => {
-      if (err.name === "SomeError") {
-        return re.status(404).send({ message: "Карточка по указанному _id не найден." });
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "Карточка по указанному _id не найден." });
       } else {
         return res.status(500).send({ message: err.message });
       };
@@ -54,8 +55,8 @@ module.exports.likeCard = (req, res) => {
       };
     })
     .catch((err) => {
-      if (err.name === "SomeError" || err.name === "ValidationError") {
-        return re.status(400).send({ message: "Переданы некорректные данные для снятии лайка." });
+      if (err.name === "CastError" || err.name === "ValidationError") {
+        return res.status(400).send({ message: "Переданы некорректные данные для снятии лайка." });
       } else {
         return res.status(500).send({ message: err.message });
       };
@@ -75,8 +76,8 @@ module.exports.dislikeCard = (req, res) => {
       };
     })
     .catch((err) => {
-      if (err.name === "SomeError" || err.name === "ValidationError") {
-        return re.status(400).send({ message: "Переданы некорректные данные для снятии лайка." });
+      if (err.name === "CastError" || err.name === "ValidationError") {
+        return res.status(400).send({ message: "Переданы некорректные данные для снятии лайка." });
       } else {
         return res.status(500).send({ message: err.message });
       };
