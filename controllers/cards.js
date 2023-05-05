@@ -22,16 +22,16 @@ module.exports.deleteCardById = (req, res) => {
   const { cardId } = req.params;
 
   Card.findByIdAndRemove(cardId)
-    .orFail()
+    .orFail(new Error('NotValidId'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
+      if (err.message === 'NotValidId') {
+        return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
+      }
       if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Переданы некорректные данные.' });
       }
-      if (err.name === 'ValidationError') {
-        return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
-      }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -41,15 +41,16 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
-      } return res.status(200).send(card);
-    })
+    .orFail(new Error('NotValidId'))
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные для снятии лайка.' });
-      } return res.status(500).send({ message: err.message });
+      if (err.message === 'NotValidId') {
+        return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные.' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -59,14 +60,15 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
-      } return res.status(200).send(card);
-    })
+    .orFail(new Error('NotValidId'))
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные для снятии лайка.' });
-      } return res.status(500).send({ message: err.message });
+      if (err.message === 'NotValidId') {
+        return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные.' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
