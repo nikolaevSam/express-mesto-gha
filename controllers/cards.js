@@ -22,10 +22,10 @@ module.exports.deleteCardById = (req, res) => {
   const { cardId } = req.params;
 
   Card.findByIdAndRemove(cardId)
-    .orFail(new Error('NotValidId'))
+    .orFail(new Error('NotFound'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
+      if (err.message === 'NotFound') {
         return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
       }
       if (err.name === 'CastError') {
@@ -41,10 +41,10 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new Error('NotValidId'))
+    .orFail(new Error('NotFound'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
+      if (err.message === 'NotFound') {
         return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
       }
       if (err.name === 'CastError') {
@@ -60,10 +60,10 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new Error('NotValidId'))
+    .orFail(new Error('NotFound'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
+      if (err.message === 'NotFound') {
         return res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
       }
       if (err.name === 'CastError') {

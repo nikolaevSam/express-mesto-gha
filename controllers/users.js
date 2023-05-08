@@ -10,10 +10,10 @@ module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .orFail(new Error('NoValidId'))
+    .orFail(new Error('NotFound'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'NoValidId') {
+      if (err.message === 'NotFound') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
       if (err.name === 'CastError') {
@@ -49,7 +49,7 @@ module.exports.updateUser = (req, res) => {
       runValidators: true,
     },
   )
-    // .orFail()
+    .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.log(err.name);
