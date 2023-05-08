@@ -49,14 +49,14 @@ module.exports.updateUser = (req, res) => {
       runValidators: true,
     },
   )
-    .orFail(new Error('NoValidId'))
+    // .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.log(err.name);
-      if (err.message === 'NoValidId') {
+      if (err.name === 'CastError') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
@@ -76,13 +76,14 @@ module.exports.updateAvatar = (req, res) => {
       runValidators: true,
     },
   )
-    .orFail(new Error('NoValidId'))
+    .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'NoValidId') {
+      console.log(err.name);
+      if (err.name === 'CastError') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
