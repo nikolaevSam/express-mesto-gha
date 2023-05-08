@@ -52,7 +52,6 @@ module.exports.updateUser = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
@@ -79,7 +78,6 @@ module.exports.updateAvatar = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       }
