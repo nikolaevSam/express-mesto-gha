@@ -23,12 +23,10 @@ module.exports.createUser = (req, res) => {
     })
     .then(() => {
       res.status(201).send({
-        data: {
-          email,
-          name,
-          about,
-          avatar,
-        },
+        email,
+        name,
+        about,
+        avatar,
       });
     })
     .catch((err) => {
