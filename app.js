@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 
 const helmet = require('helmet');
 
+const { errors } = require('celebrate');
+
 const auth = require('./middlewares/auth');
 const
   {
@@ -31,6 +33,7 @@ app.post('/signin', loginValidation, login);
 app.use(auth);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(errors());
 
 app.use(helmet());
 

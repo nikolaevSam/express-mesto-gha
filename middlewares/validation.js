@@ -2,19 +2,19 @@ const { Joi, celebrate } = require('celebrate');
 
 const isURL = require('validator/lib/isURL');
 
-const RequestError = require('../errors/requestError');
+const BadRequestError = require('../errors/BadRequestError');
 
 const urlValidation = (url) => {
   if (isURL(url)) {
     return url;
-  } return RequestError('Некорректный URL.');
+  } return BadRequestError('Некорректный URL.');
 };
 
 const idValidation = (id) => {
   const regex = /^[0-9a-fA-F]{24}$/;
   if (regex.test(id)) {
     return id;
-  } return RequestError('Некорректный id');
+  } return BadRequestError('Некорректный id');
 };
 
 module.exports.loginValidation = celebrate({
