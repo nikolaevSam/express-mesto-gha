@@ -4,17 +4,52 @@ const User = require('../models/user');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
+module.exports.createUser = (req, res) => {
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
+  bcryptjs.hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      });
+    })
+    .then(() => {
+      res.status(201).send({
+        data: {
+          name,
+          about,
+          avatar,
+          email,
+        },
+      });
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        return res.status(409).send({ message: 'Пользователь с таким Email уже существует' });
+      }
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
+
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' },
-      );
-
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ token });
     })
     .catch((err) => {
@@ -29,9 +64,9 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  const userId = req.params.userId ? req.params.userId : req.user._id;
+  const userId = req.user._id;
 
-  User.findOne(userId)
+  User.findById(userId)
     .orFail(new Error('NotFound'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -59,33 +94,6 @@ module.exports.getUserById = (req, res) => {
         return res.status(400).send({ message: 'Переданы некорректные данные.' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
-    });
-};
-
-module.exports.createUser = (req, res) => {
-  const {
-    name,
-    about,
-    avatar,
-    email,
-    password,
-  } = req.body;
-
-  bcryptjs.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      });
-    })
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      } return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 

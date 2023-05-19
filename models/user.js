@@ -7,40 +7,35 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      require: [true, 'Поле "email" должно быть заполнено'],
+      require: true,
       validate: {
-        validator: (email) => validator.isEmail(email),
+        validator: (url) => validator.isEmail(url),
         message: 'Неккоректный Email',
       },
     },
     password: {
       type: String,
-      require: [true, 'Поле "password" должно быть заполнено'],
-      minlength: [8, 'Минимальная длина поля "name" - 8'],
+      require: true,
       selected: false,
-      validate: {
-        validator: (password) => validator.isStrongPassword(password),
-        message: 'Неккоректный пароль',
-      },
     },
     name: {
       type: String,
       default: 'Жак-Ив Кусто',
-      minlength: [2, 'Минимальная длина поля "name" - 2'],
-      maxlength: [30, 'Максимальная длина поля "name" - 30'],
+      minlength: 2,
+      maxlength: 30,
     },
     about: {
       type: String,
       default: 'Исследователь',
-      minlength: [2, 'Минимальная длина поля "about" - 2'],
-      maxlength: [30, 'Максимальная длина поля "about" - 30'],
+      minlength: 2,
+      maxlength: 30,
     },
     avatar: {
       type: String,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
       validate: {
-        validator: (avatar) => validator.isURL(avatar),
-        message: 'Введите ссылку',
+        validator: (url) => validator.isURL(url),
+        message: 'Некорректный URL',
       },
     },
   },
@@ -49,7 +44,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function _(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
