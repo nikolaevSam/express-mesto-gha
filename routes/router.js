@@ -15,8 +15,8 @@ const
     loginValidation,
   } = require('../middlewares/validation');
 
-router.post('/signup', loginValidation, createUser);
-router.post('/signin', createUserValidation, login);
+router.post('/signup', createUserValidation, createUser);
+router.post('/signin', loginValidation, login);
 router.use('/users', usersRouter);
 router.use('/cards', cardsRouter);
 router.use('/*', (req, res) => {

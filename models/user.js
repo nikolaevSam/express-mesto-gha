@@ -4,20 +4,6 @@ const bcryptjs = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
-    email: {
-      type: String,
-      unique: true,
-      require: true,
-      validate: {
-        validator: (url) => validator.isEmail(url),
-        message: 'Неккоректный Email',
-      },
-    },
-    password: {
-      type: String,
-      require: true,
-      selected: false,
-    },
     name: {
       type: String,
       default: 'Жак-Ив Кусто',
@@ -37,6 +23,20 @@ const userSchema = new mongoose.Schema(
         validator: (url) => validator.isURL(url),
         message: 'Некорректный URL',
       },
+    },
+    email: {
+      type: String,
+      unique: true,
+      require: true,
+      validate: {
+        validator: (url) => validator.isEmail(url),
+        message: 'Неккоректный Email',
+      },
+    },
+    password: {
+      type: String,
+      require: true,
+      selected: false,
     },
   },
   {

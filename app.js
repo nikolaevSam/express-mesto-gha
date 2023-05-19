@@ -2,8 +2,6 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const cookieParser = require('cookie-parser');
-
 require('dotenv').config();
 
 const app = express();
@@ -20,7 +18,6 @@ const {
 } = process.env;
 
 app.use(auth);
-app.use(cookieParser);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
