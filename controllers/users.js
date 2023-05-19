@@ -1,4 +1,4 @@
-const bcryptjs = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const BadRequestError = require('../errors/BadRequestError');
@@ -14,7 +14,7 @@ module.exports.createUser = (req, res, next) => {
     password,
   } = req.body;
 
-  bcryptjs.hash(password, 10)
+  bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({
         name,
@@ -34,11 +34,9 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        console.log(err);
-        return next(new ConflictError('Переданы некорректные данные при создании пользователя.'));
+        return next(new ConflictError('Пользователь с таким Email уже существует.'));
       }
       if (err.name === 'ValidationError') {
-        console.log(err);
         return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       return next(err);
