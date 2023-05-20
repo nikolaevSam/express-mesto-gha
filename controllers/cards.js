@@ -38,7 +38,7 @@ module.exports.deleteCardById = (req, res, next) => {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
       }
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Переданы некорректные данные.'));
+        return next(new BadRequestError('Переданы некорректные данные.')); // change from NotFoundError
       }
       return next(err);
     });
@@ -57,7 +57,7 @@ module.exports.likeCard = (req, res, next) => {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
       }
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Переданы некорректные данные.'));
+        return next(new BadRequestError('Переданы некорректные данные.')); // change from NotFoundError
       }
       return next(err);
     });
@@ -76,7 +76,7 @@ module.exports.dislikeCard = (req, res, next) => {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
       }
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Переданы некорректные данные.'));
+        return next(new BadRequestError('Переданы некорректные данные.')); // change from NotFoundError
       }
       return next(err);
     });
