@@ -26,19 +26,16 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
-    .orFail(new Error('NotFound'))
+  Card.findById(cardId)
+    .orFail(new NotFoundError('Карточка по указанному _id не найдена.'))
     .then((card) => {
       if ((card.owner).toString() !== req.user._id) {
         return next(new ForbiddenError('Карточку невозможно удалить.'));
-      } return res.status(HTTP_STATUS_OK).send({ message: 'Карточка удалена' });
+      } return card.remove();
     })
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Карточка по указанному _id не найдена.'));
-      }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные.')); // change from NotFoundError
+        return next(new BadRequestError('Переданы некорректные данные.'));
       }
       return next(err);
     });
@@ -50,14 +47,11 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new Error('NotFound'))
+    .orFail(new NotFoundError('Карточка по указанному _id не найдена.'))
     .then(() => res.status(HTTP_STATUS_OK).send({ message: 'Карточке поставлен лайк' }))
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Карточка по указанному _id не найдена.'));
-      }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные.')); // change from NotFoundError
+        return next(new BadRequestError('Переданы некорректные данные.'));
       }
       return next(err);
     });
@@ -69,14 +63,11 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new Error('NotFound'))
+    .orFail(new NotFoundError('Карточка по указанному _id не найдена.'))
     .then(() => res.status(HTTP_STATUS_OK).send({ message: 'У карточки удален лайк' }))
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Карточка по указанному _id не найдена.'));
-      }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные.')); // change from NotFoundError
+        return next(new BadRequestError('Переданы некорректные данные.'));
       }
       return next(err);
     });
