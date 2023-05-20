@@ -29,12 +29,15 @@ module.exports.deleteCardById = (req, res, next) => {
   Card.findById(cardId)
     .orFail(new NotFoundError('Карточка по указанному _id не найдена.'))
     .then((card) => {
-      if ((card.owner).toString() !== req.user._id) {
-        return next(new ForbiddenError('Карточку невозможно удалить.'));
-      } return Card.findByIdAndRemove(cardId);
+      if (card.owner.toString() !== req.user._id) {
+        next(new ForbiddenError('Карточку невозможно удалить.'));
+      }
+      card.deleteOne();
+      res.send({ message: 'Карточка удалена' });
     })
-    .then(() => res.status(HTTP_STATUS_OK).send({ message: 'Карточка удалена.' }))
+
     .catch((err) => {
+      console.log(err);
       if (err.name === 'CastError') {
         return next(new BadRequestError('Переданы некорректные данные.'));
       }
