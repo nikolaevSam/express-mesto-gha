@@ -44,13 +44,15 @@ module.exports.deleteCardById = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
+  const { cardId } = req.params.cardId;
+
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new Error('NotFound'))
-    .then((card) => res.status(200).send(card))
+    .then(() => res.status(200).send({ message: `Карточке ${cardId} поставлено "мне нравится"` }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
@@ -63,13 +65,15 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
+  const { cardId } = req.params.cardId;
+
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new Error('NotFound'))
-    .then((card) => res.status(200).send(card))
+    .then(() => res.status(200).send({ message: `У карточки ${cardId} удалено "мне нравится"` }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
