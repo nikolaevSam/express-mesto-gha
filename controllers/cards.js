@@ -14,11 +14,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then((card) => {
-      if (card.owner !== req.user._id) {
-        return next(new ForbiddenError('Карточку невозможно удалить.'));
-      } return res.status(201).send(card);
-    })
+    .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
@@ -31,13 +27,17 @@ module.exports.deleteCardById = (req, res, next) => {
 
   Card.findByIdAndRemove(cardId)
     .orFail(new Error('NotFound'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (card.owner !== req.user._id) {
+        return next(new ForbiddenError('Карточку невозможно удалить.'));
+      } return res.status(201).send(card);
+    })
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
       }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные.'));
+        return next(new NotFoundError('Переданы некорректные данные.'));
       }
       return next(err);
     });
@@ -56,7 +56,7 @@ module.exports.likeCard = (req, res, next) => {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
       }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные.'));
+        return next(new NotFoundError('Переданы некорректные данные.'));
       }
       return next(err);
     });
@@ -75,7 +75,7 @@ module.exports.dislikeCard = (req, res, next) => {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
       }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные.'));
+        return next(new NotFoundError('Переданы некорректные данные.'));
       }
       return next(err);
     });

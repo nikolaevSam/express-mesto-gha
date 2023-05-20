@@ -11,7 +11,7 @@ module.exports.getUsers = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.getUser = (req, res, next) => { // сделать
+module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new Error('NotFound'))
     .then((user) => res.status(200).send(user))
@@ -89,13 +89,6 @@ module.exports.updateUser = (req, res, next) => {
       return next(err);
     });
 };
-
-
-
-
-
-
-
 
 module.exports.getUserById = (req, res, next) => {
   const { userId } = req.params;
