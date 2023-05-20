@@ -28,9 +28,11 @@ module.exports.deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(cardId)
     .orFail(new Error('NotFound'))
     .then((card) => {
-      if (card.owner !== req.user._id) {
+      console.log(req.user._id);
+      console.log((card.owner).toString());
+      if ((card.owner).toString() !== req.user._id) {
         return next(new ForbiddenError('Карточку невозможно удалить.'));
-      } return res.status(201).send(card);
+      } return res.status(200).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
@@ -44,15 +46,13 @@ module.exports.deleteCardById = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
-  const { cardId } = req.params.cardId;
-
   Card.findByIdAndUpdate(
-    cardId,
+    req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new Error('NotFound'))
-    .then(() => res.status(200).send({ message: `Карточке ${cardId} поставлено "мне нравится"` }))
+    .then(() => res.status(200).send({ message: 'Карточке поставлен лайк' }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
@@ -65,15 +65,13 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  const { cardId } = req.params.cardId;
-
   Card.findByIdAndUpdate(
-    cardId,
+    req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new Error('NotFound'))
-    .then(() => res.status(200).send({ message: `У карточки ${cardId} удалено "мне нравится"` }))
+    .then(() => res.status(200).send({ message: 'У карточки удален лайк' }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
