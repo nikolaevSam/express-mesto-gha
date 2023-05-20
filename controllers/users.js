@@ -45,7 +45,11 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'lev', { expiresIn: '7d' });
-      res.send({ token });
+      res.cookie('jwt', token, {
+        httpOnly: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      return res.send({ message: 'Авторицазия пройдена' });
     })
     .catch(next);
 };
