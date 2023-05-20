@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
-const router = require('./routes/router');
+const bodyParser = require('body-parser');
+
 const auth = require('./middlewares/auth');
 const
   {
@@ -25,12 +26,14 @@ const {
 mongoose.connect(URL);
 
 app.use(helmet());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.post('/signup', createUserValidation, createUser);
 app.post('/signin', loginValidation, login);
-app.use(auth);
-app.use(router);
-app.use(errors());
+app.use('/', auth, require('./routes/router'));
+
+app.use(errors({ message: 'Ошибка валидации Joi!' }));
 
 app.use((error, req, res, next) => {
   const {
@@ -42,7 +45,6 @@ app.use((error, req, res, next) => {
   });
   next();
 });
-
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
