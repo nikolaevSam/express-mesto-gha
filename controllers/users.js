@@ -4,6 +4,7 @@ const User = require('../models/user');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
 const NotFoundError = require('../errors/NotFoundError');
+const { HTTP_STATUS_CREATED, HTTP_STATUS_OK } = require('../utils/constants');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -15,7 +16,7 @@ module.exports.createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(201).send({
+      res.status(HTTP_STATUS_CREATED).send({
         data: {
           email: user.email,
           name: user.name,
@@ -59,7 +60,7 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new Error('NotFound'))
-    .then((user) => res.status(200).send({
+    .then((user) => res.status(HTTP_STATUS_OK).send({
       data: {
         email: user.email,
         name: user.name,
@@ -81,7 +82,7 @@ module.exports.getUser = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new Error('NotFound'))
-    .then((user) => res.status(200).send({
+    .then((user) => res.status(HTTP_STATUS_OK).send({
       data: {
         email: user.email,
         name: user.name,
@@ -115,7 +116,7 @@ module.exports.updateUser = (req, res, next) => {
     },
   )
     .orFail()
-    .then((user) => res.status(200).send({
+    .then((user) => res.status(HTTP_STATUS_OK).send({
       data: {
         email: user.email,
         name: user.name,
@@ -148,7 +149,7 @@ module.exports.updateAvatar = (req, res, next) => {
     },
   )
     .orFail()
-    .then((user) => res.status(200).send({
+    .then((user) => res.status(HTTP_STATUS_OK).send({
       data: {
         email: user.email,
         name: user.name,

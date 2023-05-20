@@ -1,18 +1,16 @@
 const { Joi, celebrate } = require('celebrate');
 
-const isURL = require('validator/lib/isURL');
-
 const BadRequestError = require('../errors/BadRequestError');
+const { linkRegex, idRegex } = require('../utils/constants');
 
 const urlValidation = (url) => {
-  if (isURL(url)) {
+  if (linkRegex.test(url)) {
     return url;
   } return BadRequestError('Некорректный URL.');
 };
 
 const idValidation = (id) => {
-  const regex = /^[0-9a-fA-F]{24}$/;
-  if (regex.test(id)) {
+  if (idRegex.test(id)) {
     return id;
   } return BadRequestError('Некорректный id');
 };

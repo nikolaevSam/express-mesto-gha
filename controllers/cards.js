@@ -2,6 +2,7 @@ const Card = require('../models/card');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
+const { HTTP_STATUS_CREATED, HTTP_STATUS_OK } = require('../utils/constants');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -14,7 +15,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send(card))
+    .then(() => res.status(HTTP_STATUS_CREATED).send({ message: 'Карточка создана' }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
@@ -32,7 +33,7 @@ module.exports.deleteCardById = (req, res, next) => {
       console.log((card.owner).toString());
       if ((card.owner).toString() !== req.user._id) {
         return next(new ForbiddenError('Карточку невозможно удалить.'));
-      } return res.status(200).send({ message: 'Карточка удалена' });
+      } return res.status(HTTP_STATUS_OK).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
@@ -52,7 +53,7 @@ module.exports.likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(new Error('NotFound'))
-    .then(() => res.status(200).send({ message: 'Карточке поставлен лайк' }))
+    .then(() => res.status(HTTP_STATUS_OK).send({ message: 'Карточке поставлен лайк' }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));
@@ -71,7 +72,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(new Error('NotFound'))
-    .then(() => res.status(200).send({ message: 'У карточки удален лайк' }))
+    .then(() => res.status(HTTP_STATUS_OK).send({ message: 'У карточки удален лайк' }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Карточка по указанному _id не найдена.'));

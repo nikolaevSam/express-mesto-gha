@@ -1,7 +1,9 @@
+const { HTTP_STATUS_CONFLICT } = require('../utils/constants');
+
 class ConflictError extends Error {
   constructor(message) {
     super(message);
-    this.status = 409; // сделал из 401
+    this.status = HTTP_STATUS_CONFLICT;
   }
 }
 

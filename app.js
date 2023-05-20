@@ -11,6 +11,7 @@ const auth = require('./middlewares/auth');
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const { createUserValidation, loginValidation } = require('./middlewares/validation');
+const { HTTP_STATUS_INTERNAL_SERVER_ERROR } = require('./utils/constants');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,11 +34,11 @@ app.use(errors({ message: 'Ошибка валидации Joi!' }));
 
 app.use((error, req, res, next) => {
   const {
-    status = 500,
+    status = HTTP_STATUS_INTERNAL_SERVER_ERROR,
     message,
   } = error;
   res.status(status).send({
-    message: status === 500 ? 'На сервере произошла ошибка' : message,
+    message: status === HTTP_STATUS_INTERNAL_SERVER_ERROR ? 'На сервере произошла ошибка' : message,
   });
   next();
 });
