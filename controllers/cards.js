@@ -15,7 +15,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then(() => res.status(HTTP_STATUS_CREATED).send({ message: 'Карточка создана' }))
+    .then((card) => res.status(HTTP_STATUS_CREATED).send({ message: `Карточка ${card._id} создана` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
@@ -29,8 +29,6 @@ module.exports.deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(cardId)
     .orFail(new Error('NotFound'))
     .then((card) => {
-      console.log(req.user._id);
-      console.log((card.owner).toString());
       if ((card.owner).toString() !== req.user._id) {
         return next(new ForbiddenError('Карточку невозможно удалить.'));
       } return res.status(HTTP_STATUS_OK).send({ message: 'Карточка удалена' });
