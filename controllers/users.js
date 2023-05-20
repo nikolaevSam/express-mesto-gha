@@ -16,7 +16,14 @@ module.exports.createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(HTTP_STATUS_CREATED).send({ user });
+      res.status(HTTP_STATUS_CREATED).send({
+        data: {
+          email: user.email,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+        },
+      });
     })
     .catch((err) => {
       if (err.code === 11000) {
@@ -38,7 +45,6 @@ module.exports.login = (req, res, next) => {
       res.cookie('jwt', token, {
         httpOnly: false,
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        secure: true,
       });
       return res.send({ message: 'Авторицазия пройдена' });
     })
@@ -54,7 +60,14 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new Error('NotFound'))
-    .then((user) => res.status(HTTP_STATUS_OK).send({ user }))
+    .then((user) => res.status(HTTP_STATUS_OK).send({
+      data: {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));
@@ -69,7 +82,14 @@ module.exports.getUser = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new Error('NotFound'))
-    .then((user) => res.status(HTTP_STATUS_OK).send({ user }))
+    .then((user) => res.status(HTTP_STATUS_OK).send({
+      data: {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));
@@ -96,7 +116,14 @@ module.exports.updateUser = (req, res, next) => {
     },
   )
     .orFail()
-    .then((user) => res.status(HTTP_STATUS_OK).send({ user }))
+    .then((user) => res.status(HTTP_STATUS_OK).send({
+      data: {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));
@@ -122,7 +149,14 @@ module.exports.updateAvatar = (req, res, next) => {
     },
   )
     .orFail()
-    .then((user) => res.status(HTTP_STATUS_OK).send({ user }))
+    .then((user) => res.status(HTTP_STATUS_OK).send({
+      data: {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));
